@@ -1,0 +1,123 @@
+# 동아일보 DB 크롤러 (https://db.history.go.kr/)
+
+import requests
+import re
+import time
+from bs4 import BeautifulSoup
+
+#1920~1940
+for year in range(1920,1941):
+    # 월을 먼저 수집
+    url = "https://db.history.go.kr/item/level.do?sort=levelId&dir=ASC&start=1&limit=10&page=1&pre_page=1&setId=-1&totalCount=0&prevPage=1&prevLimit=&itemId=npda&types=&synonym=off&chinessChar=on&brokerPagingInfo=&levelId=npda_{0}&position=-1".format(year)
+
+    r = requests.get(url,verify=False)
+    html = r.text
+    soup = BeautifulSoup(html, 'html.parser')
+
+    months = []
+
+    # 정규표현식 패턴
+    pattern = "<li id='npda_(.*?)</li>"
+    match = re.findall(pattern, str(soup))
+    for m in match:
+        if "월" in m:
+            m = m.split("'>")[0]
+            months.append(m)
+
+    for month in months:
+        url = "https://db.history.go.kr/item/level.do?sort=levelId&dir=ASC&start=1&limit=10&page=1&pre_page=1&setId=-1&totalCount=0&prevPage=1&prevLimit=&itemId=npda&types=&synonym=off&chinessChar=on&brokerPagingInfo=&levelId=npda_{0}&position=0".format(month)
+
+        r = requests.get(url,verify=False)
+        html = r.text
+        soup = BeautifulSoup(html, 'html.parser')
+
+        pattern = "<li id='npda_(.*?)</li>"
+        match2 = re.findall(pattern, str(soup))
+
+        month1 = month.split("_")[0]
+        month2 = month.split("_")[1]
+
+        # 일 구하기
+        for m in match2:
+            if "일" in m:
+                m = m.split("'>")[0]
+                m = m.replace("_","")
+
+                # 이미지 다운
+                for idx in range(1,20):
+                    idx = str(idx)
+                    if len(idx) == 1:
+                        image_url = "https://db.history.go.kr/servlet/image_proxy.jsp?filePath=/servlet/image_download.jsp&dir_name=/s_img/K_DB&file_name=np/da/{0}/{1}/np_da_{2}_v000{3}.jpg&pos=RB&img_save=Y&water_yn=N".format(month1,month2,m,idx)
+                    else:
+                        image_url = "https://db.history.go.kr/servlet/image_proxy.jsp?filePath=/servlet/image_download.jsp&dir_name=/s_img/K_DB&file_name=np/da/{0}/{1}/np_da_{2}_v00{3}.jpg&pos=RB&img_save=Y&water_yn=N".format(month1,month2,m,idx)
+
+                    print(image_url)
+                    download = requests.get(image_url,verify=False)
+                    time.sleep(1)
+                    if len(download.content) == 0:
+                        break
+                    #path = "./result/{0}_{1}.jpg".format(m,idx)
+                    path = "E:\\donga_crawled_image\\{0}_{1}.jpg".format(m,idx)
+                    photo = open(path, 'wb')
+                    photo.write(download.content)
+                    photo.close()
+
+
+#1945~1962
+for year in range(1945,1963):
+    # 월을 먼저 수집
+    url = "https://db.history.go.kr/item/level.do?sort=levelId&dir=ASC&start=1&limit=10&page=1&pre_page=1&setId=-1&totalCount=0&prevPage=1&prevLimit=&itemId=npda&types=&synonym=off&chinessChar=on&brokerPagingInfo=&levelId=npda_{0}&position=-1".format(year)
+
+    r = requests.get(url,verify=False)
+    html = r.text
+    soup = BeautifulSoup(html, 'html.parser')
+
+    months = []
+
+    # 정규표현식 패턴F
+    pattern = "<li id='npda_(.*?)</li>"
+    match = re.findall(pattern, str(soup))
+    for m in match:
+        if "월" in m:
+            m = m.split("'>")[0]
+            months.append(m)
+
+    for month in months:
+        url = "https://db.history.go.kr/item/level.do?sort=levelId&dir=ASC&start=1&limit=10&page=1&pre_page=1&setId=-1&totalCount=0&prevPage=1&prevLimit=&itemId=npda&types=&synonym=off&chinessChar=on&brokerPagingInfo=&levelId=npda_{0}&position=0".format(month)
+
+        r = requests.get(url,verify=False)
+        html = r.text
+        soup = BeautifulSoup(html, 'html.parser')
+
+        pattern = "<li id='npda_(.*?)</li>"
+        match2 = re.findall(pattern, str(soup))
+
+        month1 = month.split("_")[0]
+        month2 = month.split("_")[1]
+
+        # 일 구하기
+        for m in match2:
+            if "일" in m:
+                m = m.split("'>")[0]
+                m = m.replace("_","")
+
+                # 이미지 다운
+                for idx in range(1,20):
+                    idx = str(idx)
+                    if len(idx) == 1:
+                        image_url = "https://db.history.go.kr/servlet/image_proxy.jsp?filePath=/servlet/image_download.jsp&dir_name=/s_img/K_DB&file_name=np/da/{0}/{1}/np_da_{2}_v000{3}.jpg&pos=RB&img_save=Y&water_yn=N".format(month1,month2,m,idx)
+                    else:
+                        image_url = "https://db.history.go.kr/servlet/image_proxy.jsp?filePath=/servlet/image_download.jsp&dir_name=/s_img/K_DB&file_name=np/da/{0}/{1}/np_da_{2}_v00{3}.jpg&pos=RB&img_save=Y&water_yn=N".format(month1,month2,m,idx)
+
+                    print(image_url)
+                    download = requests.get(image_url,verify=False)
+                    time.sleep(1)
+                    if len(download.content) == 0:
+                        break
+                    #path = r"E:\donga_crawled_image/result/{0}_{1}.jpg".format(m,idx)
+                    path = "E:\\donga_crawled_image\\{0}_{1}.jpg".format(m,idx)
+                    photo = open(path, 'wb')
+                    photo.write(download.content)
+                    photo.close()
+
+
